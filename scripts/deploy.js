@@ -13,7 +13,7 @@ async function deployBookLibraryContract() {
   const accountBalance = await deployer.getBalance();
 
   console.log('Deploying contract with account: ', deployer.address);
-  console.log('Account balance: ', accountBalance.toString());
+  console.log('Account balance: ', hre.ethers.utils.formatEther(ballance, 18));
 
   // read contract file
   const bookLibraryFactory = await hre.ethers.getContractFactory(
@@ -27,12 +27,12 @@ async function deployBookLibraryContract() {
 
   console.log('BookLibrary contract address: ', bookLibraryContract.address);
 
-  await hre.run("verify:verify", {
-    address: bookLibraryContract.address,
-    constructorArguments: [
-     // if any
-    ],
-  });
+  // await hre.run("verify:verify", {
+  //   address: bookLibraryContract.address,
+  //   constructorArguments: [
+  //    // if any
+  //   ],
+  // });
 }
 
 module.exports = deployBookLibraryContract;
