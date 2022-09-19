@@ -13,7 +13,7 @@ async function deployBookLibraryContract() {
   const accountBalance = await deployer.getBalance();
 
   console.log('Deploying contract with account: ', deployer.address);
-  console.log('Account balance: ', hre.ethers.utils.formatEther(ballance, 18));
+  console.log('Account balance: ', hre.ethers.utils.formatEther(accountBalance, 18));
 
   // read contract file
   const bookLibraryFactory = await hre.ethers.getContractFactory(

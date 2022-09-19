@@ -15,8 +15,8 @@ const run = async function(privateKey, rinkebyApiKey, bookLibraryContractAddress
     
     try {
         console.log('<< deployer tries to get available books >>');
-        const allBookIds = await bookLibraryDeployerContract.getAvailableBookIds();
-        console.log('book ids: ' + allBookIds);
+        const availableBooks = await bookLibraryDeployerContract.getAvailableBooks();
+        console.log('available books ' + availableBooks);
 
     } catch(error) {
         console.log('call failed because of:' + error.reason);
@@ -24,7 +24,8 @@ const run = async function(privateKey, rinkebyApiKey, bookLibraryContractAddress
 
     try {
         console.log('<< deployer tries to add a new book >>');
-        const allBookIds = await bookLibraryDeployerContract.addBook("only one", 0);
+        const transaction = await bookLibraryDeployerContract.addBook("only one", 0);
+        await transaction.wait();
         console.log('should be added');
 
     } catch(error) {
@@ -32,13 +33,14 @@ const run = async function(privateKey, rinkebyApiKey, bookLibraryContractAddress
     }
 
     console.log('<< get balance at >>');
-    // it doesnt change ? why
     const ballance1 = await deployerWallet.getBalance();
     console.log(hre.ethers.utils.formatEther(ballance1, 18));
 
+    const firstBookId = 0;
     try {
         console.log('<< deployer tries to borrow a book with id:0 >>');
-        await bookLibraryDeployerContract.borrowBook(0);
+        const transaction1 = await bookLibraryDeployerContract.borrowBook(firstBookId);
+        await transaction1.wait();
         console.log('should be borrowed');
 
     } catch(error) {
@@ -47,9 +49,25 @@ const run = async function(privateKey, rinkebyApiKey, bookLibraryContractAddress
 
     try {
         console.log('<< deployer tries to get available books >>');
-        const allBookIds1 = await bookLibraryDeployerContract.getAvailableBookIds();
-        console.log('book ids: ' + allBookIds1);
+        const availableBooks1 = await bookLibraryDeployerContract.getAvailableBooks();
+        console.log('available books: ' + availableBooks1);
+    } catch(error) {
+        console.log('call failed because of:' + error.reason);
+    }
 
+    try {
+        console.log('<< deployer tries to return the borrowed book >>');
+        const transaction2 = await bookLibraryDeployerContract.returnBook(firstBookId);
+        await transaction2.wait();
+        console.log('should return the book ');
+    } catch(error) {
+        console.log('call failed because of:' + error.reason);
+    }
+
+    try {
+        console.log('<< deployer tries to get available books >>');
+        const availableBooks2 = await bookLibraryDeployerContract.getAvailableBooks();
+        console.log('available books: ' + availableBooks2);
     } catch(error) {
         console.log('call failed because of:' + error.reason);
     }

@@ -14,13 +14,20 @@ contract BookLibrary is Ownable {
         uint8 bookCopiesCount;
     }
 
+    struct AvailableBook {
+        uint id;
+        string title;
+        uint8 bookCopiesCount;
+    }
+
     uint availableBookCount = 0;
     Book[] books;
     mapping (bytes32 => bool) PersonBookToIsBookBorrowed;
     mapping (uint => address[]) BookToPersons;
 
     function addBook(string calldata _title, uint8 _bookCopiesCount) external onlyOwner {
-        books.push(Book(_title, _bookCopiesCount));
+        // represent the book itself as a single copy (+1)
+        books.push(Book(_title, _bookCopiesCount + 1));
         availableBookCount++;
 
         uint id = books.length - 1;
@@ -62,18 +69,21 @@ contract BookLibrary is Ownable {
         return BookToPersons[_bookId];
     }
 
-    function getAvailableBookIds() external haveAvailableBooks view returns(uint[] memory)  {
-        uint[] memory availableBookIds = new uint[](availableBookCount);
+    function getAvailableBooks() external haveAvailableBooks view returns(AvailableBook[] memory)  {
+        AvailableBook[] memory availableBooks = new AvailableBook[](availableBookCount);
 
         uint counter = 0;
-        for (uint bookId = 0; bookId < books.length; bookId++) {
+        uint len = books.length;
+        for (uint bookId = 0; bookId < len; ++bookId) {
             if (books[bookId].bookCopiesCount > 0) {
-                availableBookIds[counter] = bookId;
+                availableBooks[counter].id = bookId;
+                availableBooks[counter].title = books[bookId].title;
+                availableBooks[counter].bookCopiesCount = books[bookId].bookCopiesCount;
                 counter++;
             }
         }
 
-        return availableBookIds;
+        return availableBooks;
     }
 
     modifier bookExists(uint _bookId) {
